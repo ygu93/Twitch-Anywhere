@@ -13,7 +13,7 @@ With this chrome extension, users will be able to:
 ## Wireframes
 The extension will be something a user can click on their browser and open a screen. The menu will show a bunch of tabs and the information for each tab.
 
-![wireframes] (https://github.com/ygu93/ztype/blob/master/Wireframe/twitch-wireframe.png)
+![wireframes] (https://github.com/ygu93/Twitch-Anywhere/blob/master/Wireframe/twitch-wireframe.png)
 
 ## Architecture and technologies
  - This extension will use Twitch's API for all its backend calls.
