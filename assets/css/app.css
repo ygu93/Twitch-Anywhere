@@ -1,0 +1,107 @@
+*{
+  margin: 0px;
+  padding: 0px;
+  font-family: Helvetica Neue,Helvetica,sans-serif;
+}
+
+.clickable{
+  cursor: pointer;
+}
+.sidebar-icons{
+  background-color: black;
+}
+
+.sidebar-icons img{
+  height: 35px;
+  width: 35px;
+  padding: 10px;
+}
+
+.sidebar-icons img:hover{
+  background-color: rgb(75, 40, 140);
+}
+
+.app-body{
+  display: flex;
+  justify-content: flex-start;
+}
+.app-container{
+  width:440px;
+  min-height: 590px;
+}
+
+.app-content{
+  width: 400px;
+  min-height: 559px;
+  overflow: hidden;
+}
+
+.login-header{
+  margin-top: 0px;
+  margin-bottom: 0px;
+  background-color: black;
+}
+
+.top-stream-index{
+}
+
+.stream-index-item{
+  display: flex;
+  justify-content: flex-start;
+  font-size: 12px;
+  padding: 10px;
+  white-space: nowrap;
+  border-bottom: 1px solid silver;
+}
+
+.stream-status{
+  width:275px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.stream-preview-img{
+  padding-right: 10px;
+}
+
+.stream-name{
+  font-weight: bold;
+}
+
+.stream-index-item:hover{
+  background-color: #efeef1;
+}
+
+.game-index{
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.game-title{
+  font-weight: bold;
+}
+
+.game-index-item{
+  padding: 10px;
+  font-size: 12px;
+}
+
+.game-index-item:hover{
+  background-color: #efeef1;
+}
+
+.game-index img{
+  width:76px;
+  height: 104px;
+}
+
+
+.game-index li{
+  list-style: none;
+  width: 76px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

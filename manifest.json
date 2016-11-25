@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "Twitch Anywhere",
+  "description": "This extension allows you to check whos streaming on Twitch.tv from anywhere",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "./assets/icons/vohiyo.png",
+    "default_popup": "root.html"
+  },
+  "permissions": [
+    "activeTab",
+     "https://ajax.googleapis.com/",
+     "https://api.twitch.tv/kraken"
+  ],
+  "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'",
+  "web_accessible_resources": ["*" , "./*"]
+}
