@@ -15,8 +15,9 @@ class TopStreamsIndexItem extends React.Component{
       </div>
       <ul className='stream-details'>
         <li className='stream-name'>{this.props.stream.channel.display_name}</li>
-        <li>{this.props.stream.game} - viewers {this.props.stream.viewers}</li>
+        <li>Streaming {this.props.stream.game}</li>
         <li className='stream-status'>{this.props.stream.channel.status}</li>
+        <li>Viewers: {this.props.stream.viewers}</li>
       </ul>
     </div>
     );

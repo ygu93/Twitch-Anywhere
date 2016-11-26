@@ -69,6 +69,7 @@
 	document.addEventListener('DOMContentLoaded', function () {
 	  var store = (0, _store2.default)();
 	  var root = document.getElementById('root');
+	  window.login = _twitch_api_util.login;
 	  _reactDom2.default.render(_react2.default.createElement(_root2.default, { store: store }), root);
 	});
 
@@ -22570,6 +22571,9 @@
 	      var receiveGameSuccess = function receiveGameSuccess(data) {
 	        return dispatch((0, _twitch_actions.receiveGame)(data));
 	      };
+	      var receiveFollowsSuccess = function receiveFollowsSuccess(data) {
+	        return dispatch((0, _twitch_actions.receiveFollows)(data));
+	      };
 	      switch (action.type) {
 	        case _twitch_actions.REQUEST_ALL_STREAMS:
 	          (0, _twitch_api_util.getStreams)(receiveAllStreamsSuccess);
@@ -22579,6 +22583,9 @@
 	          return next(action);
 	        case _twitch_actions.REQUEST_GAME:
 	          (0, _twitch_api_util.fetchStreamsOfGame)(action.game, receiveGameSuccess);
+	          return next(action);
+	        case _twitch_actions.REQUEST_FOLLOWS:
+	          (0, _twitch_api_util.getFollows)(receiveFollowsSuccess);
 	          return next(action);
 	        default:
 	          return next(action);
@@ -22631,16 +22638,43 @@
 	  });
 	};
 	
-	var login = exports.login = function login(success) {
+	var getFollows = exports.getFollows = function getFollows(success) {
+	  $.ajax({
+	    method: 'GET',
+	    url: 'https://api.twitch.tv/kraken/streams/followed',
+	    headers: {
+	      'Client-ID': '15vijk38vjlkj9kirhl904phbinisif',
+	      'Authorization': 'OAuth ' + window.authToken
+	    },
+	    success: success
+	
+	  });
+	};
+	
+	var getUser = exports.getUser = function getUser(success) {
+	  $.ajax({
+	    method: 'GET',
+	    url: 'https://api.twitch.tv/kraken/',
+	    headers: {
+	      'Client-ID': '15vijk38vjlkj9kirhl904phbinisif',
+	      'Authorization': 'OAuth ' + window.authToken
+	    },
+	    success: success
+	
+	  });
+	};
+	
+	var login = exports.login = function login() {
 	  // $.ajax({
 	  //   method:'GET',
-	  //   url: 'https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=chrome-extension://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/root.html',
+	  //   url: 'https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=chrome-extension://jigfnpghjghfgpjobdmecafdfnphgbnp/root.html',
 	  //   headers: {
 	  //     'Client-ID': '15vijk38vjlkj9kirhl904phbinisif'
 	  //   },
 	  //   success
-	  // });
-	  window.open('https://passport.twitch.tv/authentications/new?client_id=15vijk38vjlkj9kirhl904phbinisif&nonce=39aaad721f232d419c32f2bd7f1ec7cdfa95e27e&redirect_uri=chrome-extension%3A%2F%2Fjigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org%2Froot.html&response_type=token');
+	
+	  // window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=chrome-extension://jigfnpghjghfgpjobdmecafdfnphgbnp/root.html');
+	  window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/root.html');
 	};
 
 /***/ },
@@ -22658,6 +22692,8 @@
 	var RECEIVE_ALL_STREAMS = exports.RECEIVE_ALL_STREAMS = 'RECEIVE_ALL_STREAMS';
 	var REQUEST_GAME = exports.REQUEST_GAME = 'REQUEST_GAME';
 	var RECEIVE_GAME = exports.RECEIVE_GAME = 'RECEIVE_GAME';
+	var REQUEST_FOLLOWS = exports.REQUEST_FOLLOWS = 'REQUEST_FOLLOWS';
+	var RECEIVE_FOLLOWS = exports.RECEIVE_FOLLOWS = 'RECEIVE_FOLLOWS';
 	
 	var requestAllGames = exports.requestAllGames = function requestAllGames() {
 	  return {
@@ -22696,6 +22732,19 @@
 	  return {
 	    type: RECEIVE_GAME,
 	    game: game
+	  };
+	};
+	
+	var requestFollows = exports.requestFollows = function requestFollows() {
+	  return {
+	    type: REQUEST_FOLLOWS
+	  };
+	};
+	
+	var receiveFollows = exports.receiveFollows = function receiveFollows(follows) {
+	  return {
+	    type: RECEIVE_FOLLOWS,
+	    follows: follows
 	  };
 	};
 
@@ -25480,6 +25529,7 @@
 	  var requestSingleGame = function requestSingleGame(nextState) {
 	    return store.dispatch((0, _twitch_actions.requestGame)(nextState.params.gameName));
 	  };
+	
 	  return _react2.default.createElement(
 	    _reactRedux.Provider,
 	    { store: store },
@@ -31023,6 +31073,10 @@
 	
 	var _sidebar_container2 = _interopRequireDefault(_sidebar_container);
 	
+	var _twitch_api_util = __webpack_require__(202);
+	
+	var _test = __webpack_require__(366);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var App = function App(_ref) {
@@ -31036,10 +31090,8 @@
 	      _react2.default.createElement(
 	        'h2',
 	        { className: 'login-header' },
-	        _react2.default.createElement('img', { src: 'http://ttv-api.s3.amazonaws.com/assets/connect_dark.png', className: 'twitch-connect', onClick: function onClick() {
-	            return Twitch.login({
-	              scope: ['user_read', 'channel_read']
-	            });
+	        _react2.default.createElement('img', { src: 'http://ttv-api.s3.amazonaws.com/assets/connect_dark.png', className: 'clickable', onClick: function onClick() {
+	            return (0, _test.auth)();
 	          } })
 	      ),
 	      _react2.default.createElement(
@@ -31148,17 +31200,23 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this2 = this;
+	
 	      return _react2.default.createElement(
 	        'ul',
 	        { className: 'sidebar-icons' },
 	        _react2.default.createElement(
 	          'li',
-	          { className: this.state.tab === 0 ? 'clickable selected' : 'clickable', onClick: this.handleClick(0) },
+	          { className: this.state.tab === 0 ? 'clickable selected' : 'clickable', onClick: function onClick() {
+	              return _this2.handleClick(0);
+	            } },
 	          _react2.default.createElement('img', { src: '../../assets/icons/heart-1.png' })
 	        ),
 	        _react2.default.createElement(
 	          'li',
-	          { className: this.state.tab === 1 ? 'clickable selected' : 'clickable', onClick: this.handleClick(1) },
+	          { className: this.state.tab === 1 ? 'clickable selected' : 'clickable', onClick: function onClick() {
+	              return _this2.handleClick(1);
+	            } },
 	          _react2.default.createElement(
 	            _reactRouter.Link,
 	            { to: '/games' },
@@ -31167,7 +31225,9 @@
 	        ),
 	        _react2.default.createElement(
 	          'li',
-	          { className: this.state.tab === 2 ? 'clickable selected' : 'clickable', onClick: this.handleClick(2) },
+	          { className: this.state.tab === 2 ? 'clickable selected' : 'clickable', onClick: function onClick() {
+	              return _this2.handleClick(2);
+	            } },
 	          _react2.default.createElement(
 	            _reactRouter.Link,
 	            { to: '/streams' },
@@ -31327,14 +31387,19 @@
 	          _react2.default.createElement(
 	            'li',
 	            null,
-	            this.props.stream.game,
-	            ' - viewers ',
-	            this.props.stream.viewers
+	            'Streaming ',
+	            this.props.stream.game
 	          ),
 	          _react2.default.createElement(
 	            'li',
 	            { className: 'stream-status' },
 	            this.props.stream.channel.status
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            'Viewers: ',
+	            this.props.stream.viewers
 	          )
 	        )
 	      );
@@ -31641,20 +31706,25 @@
 	          { className: 'stream-details' },
 	          _react2.default.createElement(
 	            'li',
-	            null,
+	            { className: 'stream-name' },
 	            this.props.stream.channel.display_name
 	          ),
 	          _react2.default.createElement(
 	            'li',
 	            null,
-	            this.props.stream.game,
-	            ' - viewers ',
-	            this.props.stream.viewers
+	            'Streaming ',
+	            this.props.stream.game
 	          ),
 	          _react2.default.createElement(
 	            'li',
 	            { className: 'stream-status' },
 	            this.props.stream.channel.status
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            'Viewers: ',
+	            this.props.stream.viewers
 	          )
 	        )
 	      );
@@ -31665,6 +31735,32 @@
 	}(_react2.default.Component);
 	
 	exports.default = GameDetailsItem;
+
+/***/ },
+/* 366 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	chrome.storage.local.get('authToken', function (result) {
+	  if (result.authToken) {
+	    window.authToken = result.authToken;
+	  }
+	});
+	
+	var auth = exports.auth = function auth() {
+	  chrome.identity.launchWebAuthFlow({ 'url': 'https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/root.html', 'interactive': true }, function (redirectUrl) {
+	    chrome.storage.local.set({ 'authToken': redirectUrl.match(/access_token=([^&]*)/)[1] });
+	    console.log(redirectUrl);
+	    console.log(redirectUrl.match(/access_token=([^&]*)/)[1]);
+	    chrome.storage.local.get('authToken', function (result) {
+	      window.authToken = result.authToken;
+	    });
+	  });
+	};
 
 /***/ }
 /******/ ]);

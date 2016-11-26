@@ -11,6 +11,7 @@ const Root = ({ store }) => {
   const requestStreamsIndex = () => store.dispatch(requestAllStreams());
   const requestGamesIndex = () => store.dispatch(requestAllGames());
   const requestSingleGame = (nextState) => store.dispatch(requestGame(nextState.params.gameName));
+
   return(
 
     <Provider store={store}>

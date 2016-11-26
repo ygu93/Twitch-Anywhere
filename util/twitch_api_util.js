@@ -31,14 +31,43 @@ export const getStreams = (success) => {
   });
 };
 
-export const login = (success) => {
+
+export const getFollows = (success) => {
+  $.ajax({
+    method:'GET',
+    url: 'https://api.twitch.tv/kraken/streams/followed',
+    headers: {
+      'Client-ID': '15vijk38vjlkj9kirhl904phbinisif',
+      'Authorization': `OAuth ${window.authToken}`
+    },
+    success
+
+  });
+};
+
+export const getUser = (success) => {
+  $.ajax({
+    method:'GET',
+    url: 'https://api.twitch.tv/kraken/',
+    headers: {
+      'Client-ID': '15vijk38vjlkj9kirhl904phbinisif',
+      'Authorization': `OAuth ${window.authToken}`
+    },
+    success
+
+  });
+};
+
+export const login = () => {
   // $.ajax({
   //   method:'GET',
-  //   url: 'https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=chrome-extension://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/root.html',
+  //   url: 'https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=chrome-extension://jigfnpghjghfgpjobdmecafdfnphgbnp/root.html',
   //   headers: {
   //     'Client-ID': '15vijk38vjlkj9kirhl904phbinisif'
   //   },
   //   success
-  // });
-  window.open('https://passport.twitch.tv/authentications/new?client_id=15vijk38vjlkj9kirhl904phbinisif&nonce=39aaad721f232d419c32f2bd7f1ec7cdfa95e27e&redirect_uri=chrome-extension%3A%2F%2Fjigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org%2Froot.html&response_type=token');
+
+  // window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=chrome-extension://jigfnpghjghfgpjobdmecafdfnphgbnp/root.html');
+  window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/root.html');
+
 };

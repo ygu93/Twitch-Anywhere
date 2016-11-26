@@ -4,6 +4,8 @@ export const REQUEST_ALL_STREAMS = 'REQUEST_ALL_STREAMS';
 export const RECEIVE_ALL_STREAMS = 'RECEIVE_ALL_STREAMS';
 export const REQUEST_GAME = 'REQUEST_GAME';
 export const RECEIVE_GAME = 'RECEIVE_GAME';
+export const REQUEST_FOLLOWS = 'REQUEST_FOLLOWS';
+export const RECEIVE_FOLLOWS = 'RECEIVE_FOLLOWS';
 
 export const requestAllGames = () => ({
   type: REQUEST_ALL_GAMES
@@ -31,4 +33,13 @@ export const requestGame = (game) => ({
 export const receiveGame = (game) => ({
   type: RECEIVE_GAME,
   game
+});
+
+export const requestFollows = () => ({
+  type: REQUEST_FOLLOWS
+});
+
+export const receiveFollows = (follows) => ({
+  type: RECEIVE_FOLLOWS,
+  follows
 });

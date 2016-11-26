@@ -69,6 +69,10 @@
   font-weight: bold;
 }
 
+.selected{
+  background-color: rgb(75, 40, 140);
+}
+
 .stream-index-item:hover{
   background-color: #efeef1;
 }
