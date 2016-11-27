@@ -1,13 +1,12 @@
 import React from 'react';
 import SidebarContainer from './sidebar/sidebar_container';
-import {login} from '../util/twitch_api_util';
-import {auth} from '../test.js';
+import SessionContainer from './session/session_container';
+import {auth} from '../auth.js';
 
 const App = ({ children }) => (
   <div>
     <div className='app-container'>
-      <h2 className='login-header'><img src="http://ttv-api.s3.amazonaws.com/assets/connect_dark.png" className="clickable" onClick={()=>auth()}/>
-      </h2>
+    <SessionContainer/>
       <div className="app-body">
       <SidebarContainer/>
         <div className='app-content'>

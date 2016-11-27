@@ -6,6 +6,10 @@ export const REQUEST_GAME = 'REQUEST_GAME';
 export const RECEIVE_GAME = 'RECEIVE_GAME';
 export const REQUEST_FOLLOWS = 'REQUEST_FOLLOWS';
 export const RECEIVE_FOLLOWS = 'RECEIVE_FOLLOWS';
+export const REQUEST_USER = 'REQUEST_USER';
+export const RECEIVE_USER = 'RECEIVE_USER';
+export const RECEIVE_LOGIN = 'RECEIVE_LOGIN';
+export const RECEIVE_LOGOUT  = 'RECEIVE_LOGOUT';
 
 export const requestAllGames = () => ({
   type: REQUEST_ALL_GAMES
@@ -42,4 +46,22 @@ export const requestFollows = () => ({
 export const receiveFollows = (follows) => ({
   type: RECEIVE_FOLLOWS,
   follows
+});
+
+export const requestUser = (token) => ({
+  type: REQUEST_USER,
+  token
+});
+
+export const receiveUser = (user) => ({
+  type: RECEIVE_USER,
+  user
+});
+
+export const receiveLogin = () => ({
+  type: RECEIVE_LOGIN,
+});
+
+export const receiveLogout = () => ({
+  type: RECEIVE_LOGOUT
 });

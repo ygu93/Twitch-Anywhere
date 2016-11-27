@@ -45,16 +45,26 @@ export const getFollows = (success) => {
   });
 };
 
-export const getUser = (success) => {
+export const getUser = (token, success) => {
   $.ajax({
     method:'GET',
     url: 'https://api.twitch.tv/kraken/',
     headers: {
       'Client-ID': '15vijk38vjlkj9kirhl904phbinisif',
-      'Authorization': `OAuth ${window.authToken}`
+      'Authorization': `OAuth ${token}`
     },
     success
+  });
+};
 
+export const fetchUserData = (username, success) => {
+  $.ajax({
+    method:'GET',
+    url: `https://api.twitch.tv/kraken/users/${username}`,
+    headers: {
+      'Client-ID': '15vijk38vjlkj9kirhl904phbinisif',
+    },
+    success
   });
 };
 

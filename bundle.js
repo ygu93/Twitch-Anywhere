@@ -58,19 +58,31 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _twitch_api_util = __webpack_require__(202);
+	var _twitch_actions = __webpack_require__(203);
 	
 	var _root = __webpack_require__(291);
 	
 	var _root2 = _interopRequireDefault(_root);
 	
+	var _auth = __webpack_require__(374);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	document.addEventListener('DOMContentLoaded', function () {
-	  var store = (0, _store2.default)();
-	  var root = document.getElementById('root');
-	  window.login = _twitch_api_util.login;
-	  _reactDom2.default.render(_react2.default.createElement(_root2.default, { store: store }), root);
+	  var setUp = function setUp() {
+	    var store = void 0;
+	    if (window.authToken) {
+	      var preloadedState = { session: { authToken: window.authToken } };
+	      store = (0, _store2.default)(preloadedState);
+	    } else {
+	      store = (0, _store2.default)();
+	    }
+	    var root = document.getElementById('root');
+	    window.store = store;
+	    store.dispatch((0, _twitch_actions.requestUser)(window.authToken));
+	    _reactDom2.default.render(_react2.default.createElement(_root2.default, { store: store }), root);
+	  };
+	  (0, _auth.bindToken)(setUp);
 	});
 
 /***/ },
@@ -22534,14 +22546,18 @@
 	
 	var _redux = __webpack_require__(179);
 	
+	var _session_middleware = __webpack_require__(373);
+	
+	var _session_middleware2 = _interopRequireDefault(_session_middleware);
+	
 	var _twitch_middleware = __webpack_require__(201);
 	
 	var _twitch_middleware2 = _interopRequireDefault(_twitch_middleware);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var RootMiddleware = (0, _redux.applyMiddleware)(_twitch_middleware2.default);
-	// import SessionMiddleware from './session_middleware';
+	var RootMiddleware = (0, _redux.applyMiddleware)(_twitch_middleware2.default, _session_middleware2.default);
+	
 	exports.default = RootMiddleware;
 
 /***/ },
@@ -22574,6 +22590,12 @@
 	      var receiveFollowsSuccess = function receiveFollowsSuccess(data) {
 	        return dispatch((0, _twitch_actions.receiveFollows)(data));
 	      };
+	      var receiveUserSuccess = function receiveUserSuccess(data) {
+	        (0, _twitch_api_util.fetchUserData)(data.token.user_name, function (user) {
+	          return dispatch((0, _twitch_actions.receiveUser)(user));
+	        });
+	      };
+	
 	      switch (action.type) {
 	        case _twitch_actions.REQUEST_ALL_STREAMS:
 	          (0, _twitch_api_util.getStreams)(receiveAllStreamsSuccess);
@@ -22586,6 +22608,9 @@
 	          return next(action);
 	        case _twitch_actions.REQUEST_FOLLOWS:
 	          (0, _twitch_api_util.getFollows)(receiveFollowsSuccess);
+	          return next(action);
+	        case _twitch_actions.REQUEST_USER:
+	          (0, _twitch_api_util.getUser)(action.token, receiveUserSuccess);
 	          return next(action);
 	        default:
 	          return next(action);
@@ -22651,16 +22676,26 @@
 	  });
 	};
 	
-	var getUser = exports.getUser = function getUser(success) {
+	var getUser = exports.getUser = function getUser(token, success) {
 	  $.ajax({
 	    method: 'GET',
 	    url: 'https://api.twitch.tv/kraken/',
 	    headers: {
 	      'Client-ID': '15vijk38vjlkj9kirhl904phbinisif',
-	      'Authorization': 'OAuth ' + window.authToken
+	      'Authorization': 'OAuth ' + token
 	    },
 	    success: success
+	  });
+	};
 	
+	var fetchUserData = exports.fetchUserData = function fetchUserData(username, success) {
+	  $.ajax({
+	    method: 'GET',
+	    url: 'https://api.twitch.tv/kraken/users/' + username,
+	    headers: {
+	      'Client-ID': '15vijk38vjlkj9kirhl904phbinisif'
+	    },
+	    success: success
 	  });
 	};
 	
@@ -22694,6 +22729,10 @@
 	var RECEIVE_GAME = exports.RECEIVE_GAME = 'RECEIVE_GAME';
 	var REQUEST_FOLLOWS = exports.REQUEST_FOLLOWS = 'REQUEST_FOLLOWS';
 	var RECEIVE_FOLLOWS = exports.RECEIVE_FOLLOWS = 'RECEIVE_FOLLOWS';
+	var REQUEST_USER = exports.REQUEST_USER = 'REQUEST_USER';
+	var RECEIVE_USER = exports.RECEIVE_USER = 'RECEIVE_USER';
+	var RECEIVE_LOGIN = exports.RECEIVE_LOGIN = 'RECEIVE_LOGIN';
+	var RECEIVE_LOGOUT = exports.RECEIVE_LOGOUT = 'RECEIVE_LOGOUT';
 	
 	var requestAllGames = exports.requestAllGames = function requestAllGames() {
 	  return {
@@ -22747,6 +22786,32 @@
 	    follows: follows
 	  };
 	};
+	
+	var requestUser = exports.requestUser = function requestUser(token) {
+	  return {
+	    type: REQUEST_USER,
+	    token: token
+	  };
+	};
+	
+	var receiveUser = exports.receiveUser = function receiveUser(user) {
+	  return {
+	    type: RECEIVE_USER,
+	    user: user
+	  };
+	};
+	
+	var receiveLogin = exports.receiveLogin = function receiveLogin() {
+	  return {
+	    type: RECEIVE_LOGIN
+	  };
+	};
+	
+	var receiveLogout = exports.receiveLogout = function receiveLogout() {
+	  return {
+	    type: RECEIVE_LOGOUT
+	  };
+	};
 
 /***/ },
 /* 204 */
@@ -22764,9 +22829,15 @@
 	
 	var _twitch_reducer2 = _interopRequireDefault(_twitch_reducer);
 	
+	var _session_reducer = __webpack_require__(369);
+	
+	var _session_reducer2 = _interopRequireDefault(_session_reducer);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = (0, _redux.combineReducers)({ twitch: _twitch_reducer2.default
+	exports.default = (0, _redux.combineReducers)({
+	  twitch: _twitch_reducer2.default,
+	  session: _session_reducer2.default
 	});
 
 /***/ },
@@ -22804,6 +22875,8 @@
 	      return action.games;
 	    case _twitch_actions.RECEIVE_GAME:
 	      return action.game;
+	    case _twitch_actions.RECEIVE_FOLLOWS:
+	      return action.follows;
 	    default:
 	      return state;
 	  }
@@ -25515,6 +25588,10 @@
 	
 	var _game_details_container2 = _interopRequireDefault(_game_details_container);
 	
+	var _followed_streams_index_container = __webpack_require__(370);
+	
+	var _followed_streams_index_container2 = _interopRequireDefault(_followed_streams_index_container);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var Root = function Root(_ref) {
@@ -25529,6 +25606,18 @@
 	  var requestSingleGame = function requestSingleGame(nextState) {
 	    return store.dispatch((0, _twitch_actions.requestGame)(nextState.params.gameName));
 	  };
+	  var checkUser = function checkUser() {
+	    if (window.authToken) {
+	      console.log('checkuser runs now');
+	      store.dispatch((0, _twitch_actions.requestUser)(window.authToken));
+	    }
+	  };
+	
+	  var requestFollowedStreams = function requestFollowedStreams() {
+	    if (window.authToken) {
+	      store.dispatch((0, _twitch_actions.requestFollows)());
+	    }
+	  };
 	
 	  return _react2.default.createElement(
 	    _reactRedux.Provider,
@@ -25541,7 +25630,8 @@
 	        { path: '/', component: _app2.default },
 	        _react2.default.createElement(_reactRouter.Route, { path: 'streams', component: _top_streams_index_container2.default, onEnter: requestStreamsIndex }),
 	        _react2.default.createElement(_reactRouter.Route, { path: 'games', component: _games_index_container2.default, onEnter: requestGamesIndex }),
-	        _react2.default.createElement(_reactRouter.Route, { path: 'games/:gameName', component: _game_details_container2.default, onEnter: requestSingleGame })
+	        _react2.default.createElement(_reactRouter.Route, { path: 'games/:gameName', component: _game_details_container2.default, onEnter: requestSingleGame }),
+	        _react2.default.createElement(_reactRouter.Route, { path: 'followed', component: _followed_streams_index_container2.default, onEnter: requestFollowedStreams })
 	      )
 	    )
 	  );
@@ -31073,9 +31163,11 @@
 	
 	var _sidebar_container2 = _interopRequireDefault(_sidebar_container);
 	
-	var _twitch_api_util = __webpack_require__(202);
+	var _session_container = __webpack_require__(367);
 	
-	var _test = __webpack_require__(366);
+	var _session_container2 = _interopRequireDefault(_session_container);
+	
+	var _auth = __webpack_require__(374);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -31087,13 +31179,7 @@
 	    _react2.default.createElement(
 	      'div',
 	      { className: 'app-container' },
-	      _react2.default.createElement(
-	        'h2',
-	        { className: 'login-header' },
-	        _react2.default.createElement('img', { src: 'http://ttv-api.s3.amazonaws.com/assets/connect_dark.png', className: 'clickable', onClick: function onClick() {
-	            return (0, _test.auth)();
-	          } })
-	      ),
+	      _react2.default.createElement(_session_container2.default, null),
 	      _react2.default.createElement(
 	        'div',
 	        { className: 'app-body' },
@@ -31210,7 +31296,11 @@
 	          { className: this.state.tab === 0 ? 'clickable selected' : 'clickable', onClick: function onClick() {
 	              return _this2.handleClick(0);
 	            } },
-	          _react2.default.createElement('img', { src: '../../assets/icons/heart-1.png' })
+	          _react2.default.createElement(
+	            _reactRouter.Link,
+	            { to: '/followed' },
+	            _react2.default.createElement('img', { src: '../../assets/icons/heart-1.png' })
+	          )
 	        ),
 	        _react2.default.createElement(
 	          'li',
@@ -31737,7 +31827,385 @@
 	exports.default = GameDetailsItem;
 
 /***/ },
-/* 366 */
+/* 366 */,
+/* 367 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _session = __webpack_require__(368);
+	
+	var _session2 = _interopRequireDefault(_session);
+	
+	var _reactRedux = __webpack_require__(292);
+	
+	var _twitch_actions = __webpack_require__(203);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    twitch: state.twitch,
+	    session: state.session
+	  };
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {
+	    requestUser: function requestUser(authToken) {
+	      return dispatch((0, _twitch_actions.requestUser)(authToken));
+	    },
+	    receiveLogout: function receiveLogout() {
+	      return dispatch((0, _twitch_actions.receiveLogout)());
+	    }
+	
+	  };
+	};
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_session2.default);
+
+/***/ },
+/* 368 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _auth = __webpack_require__(374);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Session = function (_React$Component) {
+	  _inherits(Session, _React$Component);
+	
+	  function Session(props) {
+	    _classCallCheck(this, Session);
+	
+	    var _this = _possibleConstructorReturn(this, (Session.__proto__ || Object.getPrototypeOf(Session)).call(this, props));
+	
+	    _this.handleLogin = _this.handleLogin.bind(_this);
+	    _this.handleLogout = _this.handleLogout.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(Session, [{
+	    key: 'handleLogin',
+	    value: function handleLogin() {
+	      (0, _auth.auth)(this.props.requestUser);
+	      // setTimeout(()=> this.props.requestUser(window.authToken), 2000);
+	    }
+	  }, {
+	    key: 'handleLogout',
+	    value: function handleLogout() {
+	      this.props.receiveLogout();
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      if (this.props.session.authToken && this.props.session.display_name && this.props.session.display_name !== 'Undefined') {
+	        return _react2.default.createElement(
+	          'h2',
+	          { className: 'logged-in' },
+	          _react2.default.createElement('img', { src: this.props.session.logo ? this.props.session.logo : 'https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png' }),
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'displayName' },
+	            this.props.session.display_name
+	          )
+	        );
+	      } else {
+	        return _react2.default.createElement(
+	          'h2',
+	          { className: 'login-header' },
+	          _react2.default.createElement('img', { src: 'http://ttv-api.s3.amazonaws.com/assets/connect_dark.png', className: 'clickable', onClick: this.handleLogin })
+	        );
+	      }
+	    }
+	  }]);
+	
+	  return Session;
+	}(_react2.default.Component);
+	
+	exports.default = Session;
+
+/***/ },
+/* 369 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _merge = __webpack_require__(206);
+	
+	var _merge2 = _interopRequireDefault(_merge);
+	
+	var _twitch_actions = __webpack_require__(203);
+	
+	var _auth = __webpack_require__(374);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var SessionReducer = function SessionReducer() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	  var action = arguments[1];
+	
+	  Object.freeze(state);
+	  var dup = (0, _merge2.default)({}, state);
+	  switch (action.type) {
+	    case _twitch_actions.RECEIVE_USER:
+	      return (0, _merge2.default)({}, state, action.user);
+	    case _twitch_actions.RECEIVE_LOGIN:
+	      dup['authToken'] = window.authToken;
+	      return dup;
+	    case _twitch_actions.RECEIVE_LOGOUT:
+	      dup['authToken'] = null;
+	      (0, _auth.removeToken)();
+	      return dup;
+	    default:
+	      return state;
+	  }
+	};
+	
+	exports.default = SessionReducer;
+
+/***/ },
+/* 370 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _reactRedux = __webpack_require__(292);
+	
+	var _followed_streams_index = __webpack_require__(371);
+	
+	var _followed_streams_index2 = _interopRequireDefault(_followed_streams_index);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    twitch: state.twitch
+	  };
+	};
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(_followed_streams_index2.default);
+
+/***/ },
+/* 371 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _followed_streams_index_item = __webpack_require__(372);
+	
+	var _followed_streams_index_item2 = _interopRequireDefault(_followed_streams_index_item);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var FollowedStreamsIndex = function (_React$Component) {
+	  _inherits(FollowedStreamsIndex, _React$Component);
+	
+	  function FollowedStreamsIndex(props) {
+	    _classCallCheck(this, FollowedStreamsIndex);
+	
+	    return _possibleConstructorReturn(this, (FollowedStreamsIndex.__proto__ || Object.getPrototypeOf(FollowedStreamsIndex)).call(this, props));
+	  }
+	
+	  _createClass(FollowedStreamsIndex, [{
+	    key: 'render',
+	    value: function render() {
+	      if (this.props.twitch._total > 0 && this.props.twitch.streams) {
+	        return _react2.default.createElement(
+	          'ul',
+	          { className: 'top-stream-index' },
+	          this.props.twitch.streams.map(function (stream, idx) {
+	            return _react2.default.createElement(_followed_streams_index_item2.default, { key: idx, stream: stream });
+	          })
+	        );
+	      } else {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          'No Channels Live'
+	        );
+	      }
+	    }
+	  }]);
+	
+	  return FollowedStreamsIndex;
+	}(_react2.default.Component);
+	
+	exports.default = FollowedStreamsIndex;
+
+/***/ },
+/* 372 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var FollowedStreamsIndexItem = function (_React$Component) {
+	  _inherits(FollowedStreamsIndexItem, _React$Component);
+	
+	  function FollowedStreamsIndexItem(props) {
+	    _classCallCheck(this, FollowedStreamsIndexItem);
+	
+	    return _possibleConstructorReturn(this, (FollowedStreamsIndexItem.__proto__ || Object.getPrototypeOf(FollowedStreamsIndexItem)).call(this, props));
+	  }
+	
+	  _createClass(FollowedStreamsIndexItem, [{
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'clickable stream-index-item', onClick: function onClick() {
+	            return window.open(_this2.props.stream.channel.url);
+	          } },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'stream-preview-img' },
+	          _react2.default.createElement('img', { src: this.props.stream.preview.small })
+	        ),
+	        _react2.default.createElement(
+	          'ul',
+	          { className: 'stream-details' },
+	          _react2.default.createElement(
+	            'li',
+	            { className: 'stream-name' },
+	            this.props.stream.channel.display_name
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            'Streaming ',
+	            this.props.stream.game
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            { className: 'stream-status' },
+	            this.props.stream.channel.status
+	          ),
+	          _react2.default.createElement(
+	            'li',
+	            null,
+	            'Viewers: ',
+	            this.props.stream.viewers
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return FollowedStreamsIndexItem;
+	}(_react2.default.Component);
+	
+	exports.default = FollowedStreamsIndexItem;
+
+/***/ },
+/* 373 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _twitch_api_util = __webpack_require__(202);
+	
+	var _twitch_actions = __webpack_require__(203);
+	
+	var SessionMiddleware = function SessionMiddleware(_ref) {
+	  var dispatch = _ref.dispatch;
+	  return function (next) {
+	    return function (action) {
+	      var receiveUserSuccess = function receiveUserSuccess(data) {
+	        dispatch((0, _twitch_actions.receiveLogin)(window.authToken));
+	        (0, _twitch_api_util.fetchUserData)(data.token.user_name, function (user) {
+	          dispatch((0, _twitch_actions.receiveUser)(user));
+	        });
+	      };
+	
+	      switch (action.type) {
+	        case _twitch_actions.REQUEST_USER:
+	          (0, _twitch_api_util.getUser)(action.token, receiveUserSuccess);
+	          return next(action);
+	        default:
+	          return next(action);
+	      }
+	    };
+	  };
+	};
+	
+	exports.default = SessionMiddleware;
+
+/***/ },
+/* 374 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -31745,20 +32213,29 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	chrome.storage.local.get('authToken', function (result) {
-	  if (result.authToken) {
-	    window.authToken = result.authToken;
-	  }
-	});
-	
-	var auth = exports.auth = function auth() {
-	  chrome.identity.launchWebAuthFlow({ 'url': 'https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/root.html', 'interactive': true }, function (redirectUrl) {
-	    chrome.storage.local.set({ 'authToken': redirectUrl.match(/access_token=([^&]*)/)[1] });
-	    console.log(redirectUrl);
-	    console.log(redirectUrl.match(/access_token=([^&]*)/)[1]);
-	    chrome.storage.local.get('authToken', function (result) {
+	var bindToken = exports.bindToken = function bindToken(cb) {
+	  chrome.storage.local.get('authToken', function (result) {
+	    if (result.authToken) {
+	      console.log('now its here');
 	      window.authToken = result.authToken;
-	    });
+	      if (cb) {
+	        cb(window.authToken);
+	        console.log('reaches cb on click');
+	      }
+	    }
+	  });
+	};
+	
+	var removeToken = exports.removeToken = function removeToken() {
+	  chrome.storage.local.set({ 'authToken': null });
+	};
+	
+	var auth = exports.auth = function auth(cb) {
+	  chrome.identity.launchWebAuthFlow({ 'url': 'https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/root.html', 'interactive': true }, function (redirectUrl) {
+	    console.log(redirectUrl);
+	    chrome.storage.local.set({ 'authToken': redirectUrl.match(/access_token=([^&]*)/)[1] });
+	    bindToken(cb);
+	    console.log('reaches end of auth cb');
 	  });
 	};
 

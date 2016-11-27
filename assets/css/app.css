@@ -2,6 +2,7 @@
   margin: 0px;
   padding: 0px;
   font-family: Helvetica Neue,Helvetica,sans-serif;
+  list-style: none;
 }
 
 .clickable{
@@ -40,6 +41,29 @@
   margin-top: 0px;
   margin-bottom: 0px;
   background-color: black;
+  text-align: right;
+}
+
+.logged-in{
+  background-color: black;
+  color: white;
+  font-size: 16px;
+  text-align: right;
+  height: 36px;
+  padding: 5px;
+  font-weight: normal;
+}
+
+.logged-in span{
+  float:right;
+  margin-top: 10px;
+
+}
+
+.logged-in img{
+  height: 36px;
+  width: 36px;
+  padding-right: 10px;
 }
 
 .top-stream-index{
