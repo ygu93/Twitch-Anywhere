@@ -19,7 +19,6 @@ const TwitchReducer = (state={}, action) => {
     case RECEIVE_FOLLOWS:
       return action.follows;
     case RECEIVE_USER:
-      console.log('got to reducer');
       dup['user'] = action.user;
       return dup;
     default:

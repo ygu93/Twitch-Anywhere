@@ -11,6 +11,7 @@ import {requestAllStreams,
 import GamesIndexContainer from './games/games_index_container';
 import GameDetailsContainer from './games/game_details_container';
 import FollowedStreamsIndexContainer from './followed/followed_streams_index_container';
+import {setToken} from '../auth';
 
 const Root = ({ store }) => {
   const requestStreamsIndex = () => store.dispatch(requestAllStreams());
@@ -18,7 +19,6 @@ const Root = ({ store }) => {
   const requestSingleGame = (nextState) => store.dispatch(requestGame(nextState.params.gameName));
   const checkUser = () => {
     if(window.authToken){
-      console.log('checkuser runs now');
       store.dispatch(requestUser(window.authToken));
     }
   };
@@ -27,6 +27,11 @@ const Root = ({ store }) => {
     if(window.authToken){
       store.dispatch(requestFollows());
     }
+  };
+
+  const saveToken = () => {
+    setToken(window.location.hash);
+    window.close();
   };
 
   return(
@@ -38,6 +43,7 @@ const Root = ({ store }) => {
             <Route path="games" component={GamesIndexContainer} onEnter={requestGamesIndex}/>
             <Route path="games/:gameName" component={GameDetailsContainer} onEnter={requestSingleGame}/>
             <Route path="followed" component={FollowedStreamsIndexContainer} onEnter={requestFollowedStreams}/>
+            <Route path="access_token=:access_token" onEnter={saveToken}/>
           </Route>
       </Router>
     </Provider>

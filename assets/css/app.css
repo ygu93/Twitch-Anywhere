@@ -133,3 +133,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.no-followed-streams{
+  text-align: center;
+  font-size: 20px;
+  font-weight: normal;
+  color: gray;
+}

@@ -5,7 +5,6 @@ $(function(){
       // we're logged in :)
       $('.twitch-connect').hide();
     }else if (error){
-      console.log(error);
     }
   });
 

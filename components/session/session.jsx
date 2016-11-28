@@ -1,5 +1,6 @@
 import React from 'react';
 import {auth} from '../../auth.js';
+import {login} from '../../util/twitch_api_util';
 
 class Session extends React.Component{
   constructor(props){
@@ -27,7 +28,7 @@ class Session extends React.Component{
       );
     }else{
       return(
-        <h2 className='login-header'><img src="http://ttv-api.s3.amazonaws.com/assets/connect_dark.png" className="clickable" onClick={this.handleLogin}/></h2>
+        <h2 className='login-header'><img src="http://ttv-api.s3.amazonaws.com/assets/connect_dark.png" className="clickable" onClick={login}/></h2>
       );
     }
   }
