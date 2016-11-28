@@ -31509,8 +31509,6 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _auth = __webpack_require__(293);
-	
 	var _twitch_api_util = __webpack_require__(202);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -31527,25 +31525,10 @@
 	  function Session(props) {
 	    _classCallCheck(this, Session);
 	
-	    var _this = _possibleConstructorReturn(this, (Session.__proto__ || Object.getPrototypeOf(Session)).call(this, props));
-	
-	    _this.handleLogin = _this.handleLogin.bind(_this);
-	    _this.handleLogout = _this.handleLogout.bind(_this);
-	    return _this;
+	    return _possibleConstructorReturn(this, (Session.__proto__ || Object.getPrototypeOf(Session)).call(this, props));
 	  }
 	
 	  _createClass(Session, [{
-	    key: 'handleLogin',
-	    value: function handleLogin() {
-	      (0, _auth.auth)(this.props.requestUser);
-	      // setTimeout(()=> this.props.requestUser(window.authToken), 2000);
-	    }
-	  }, {
-	    key: 'handleLogout',
-	    value: function handleLogout() {
-	      this.props.receiveLogout();
-	    }
-	  }, {
 	    key: 'render',
 	    value: function render() {
 	      if (this.props.session.authToken && this.props.session.display_name && this.props.session.display_name !== 'Undefined') {

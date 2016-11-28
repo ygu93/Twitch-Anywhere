@@ -1,22 +1,11 @@
 import React from 'react';
-import {auth} from '../../auth.js';
 import {login} from '../../util/twitch_api_util';
 
 class Session extends React.Component{
   constructor(props){
     super(props);
-    this.handleLogin = this.handleLogin.bind(this);
-    this.handleLogout = this.handleLogout.bind(this);
   }
 
-  handleLogin(){
-    auth(this.props.requestUser);
-    // setTimeout(()=> this.props.requestUser(window.authToken), 2000);
-  }
-
-  handleLogout(){
-    this.props.receiveLogout();
-  }
 
 
   render(){
