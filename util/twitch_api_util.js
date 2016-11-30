@@ -1,3 +1,5 @@
+import {test} from '../auth';
+
 export const getGames = (success) => {
   $.ajax({
     method:'GET',
@@ -69,7 +71,6 @@ export const fetchUserData = (username, success) => {
 };
 
 export const login = () => {
-  window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=chrome-extension://jigfnpghjghfgpjobdmecafdfnphgbnp/root.html');
-  // window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/');
-
+  window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/');
+  test();
 };

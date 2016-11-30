@@ -8,11 +8,11 @@ $(function(){
     }
   });
 
-  // $('.twitch-connect').click(function() {
-  //   Twitch.login({
-  //     redirect_uri:'chrome-extension://jigfnpghjghfgpjobdmecafdfnphgbnp/root.html',
-  //     scope: ['user_read', 'channel_read']
-  //   });
-  // });
+  $('.twitch-connect').click(function() {
+    Twitch.login({
+      redirect_uri:'chrome-extension://jigfnpghjghfgpjobdmecafdfnphgbnp/root.html',
+      scope: ['user_read', 'channel_read']
+    });
+  });
 
 });

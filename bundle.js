@@ -22603,13 +22603,17 @@
 
 /***/ },
 /* 202 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.login = exports.fetchUserData = exports.getUser = exports.getFollows = exports.getStreams = exports.fetchStreamsOfGame = exports.getGames = undefined;
+	
+	var _auth = __webpack_require__(293);
+	
 	var getGames = exports.getGames = function getGames(success) {
 	  $.ajax({
 	    method: 'GET',
@@ -22680,8 +22684,8 @@
 	};
 	
 	var login = exports.login = function login() {
-	  window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=chrome-extension://jigfnpghjghfgpjobdmecafdfnphgbnp/root.html');
-	  // window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/');
+	  window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/');
+	  (0, _auth.test)();
 	};
 
 /***/ },
@@ -25647,7 +25651,7 @@
 	  value: true
 	});
 	var bindToken = exports.bindToken = function bindToken(cb) {
-	  chrome.storage.local.get('authToken', function (result) {
+	  chrome.storage.sync.get('authToken', function (result) {
 	    if (result.authToken) {
 	      window.authToken = result.authToken;
 	      if (cb) {
@@ -25660,19 +25664,22 @@
 	};
 	
 	var removeToken = exports.removeToken = function removeToken() {
-	  chrome.storage.local.set({ 'authToken': null });
+	  chrome.storage.sync.set({ 'authToken': null });
 	};
 	
 	var setToken = exports.setToken = function setToken(redirectUrl) {
-	  chrome.storage.local.set({ 'authToken': redirectUrl.match(/access_token=([^&]*)/)[1] });
+	  chrome.storage.sync.set({ 'authToken': redirectUrl.match(/access_token=([^&]*)/)[1] });
 	};
 	
-	var auth = exports.auth = function auth(cb) {
-	  chrome.identity.launchWebAuthFlow({ 'url': 'https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/', 'interactive': true }, function (redirectUrl) {
-	    chrome.storage.local.set({ 'authToken': redirectUrl.match(/access_token=([^&]*)/)[1] });
-	    bindToken(cb);
-	  });
-	};
+	// export const auth = (cb) => {
+	//   chrome.identity.launchWebAuthFlow(
+	//   {'url':'https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/', 'interactive':true},
+	//   function(redirectUrl){
+	//     chrome.storage.sync.set({'authToken': redirectUrl.match(/access_token=([^&]*)/)[1]});
+	//     bindToken(cb);
+	//   }
+	// );
+	// };
 
 /***/ },
 /* 294 */
@@ -25714,8 +25721,6 @@
 	
 	var _followed_streams_index_container2 = _interopRequireDefault(_followed_streams_index_container);
 	
-	var _auth = __webpack_require__(293);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var Root = function Root(_ref) {
@@ -25742,11 +25747,6 @@
 	    }
 	  };
 	
-	  var saveToken = function saveToken() {
-	    (0, _auth.setToken)(window.location.hash);
-	    window.close();
-	  };
-	
 	  return _react2.default.createElement(
 	    _reactRedux.Provider,
 	    { store: store },
@@ -25759,8 +25759,7 @@
 	        _react2.default.createElement(_reactRouter.Route, { path: 'streams', component: _top_streams_index_container2.default, onEnter: requestStreamsIndex }),
 	        _react2.default.createElement(_reactRouter.Route, { path: 'games', component: _games_index_container2.default, onEnter: requestGamesIndex }),
 	        _react2.default.createElement(_reactRouter.Route, { path: 'games/:gameName', component: _game_details_container2.default, onEnter: requestSingleGame }),
-	        _react2.default.createElement(_reactRouter.Route, { path: 'followed', component: _followed_streams_index_container2.default, onEnter: requestFollowedStreams }),
-	        _react2.default.createElement(_reactRouter.Route, { path: 'access_token=:access_token', onEnter: saveToken })
+	        _react2.default.createElement(_reactRouter.Route, { path: 'followed', component: _followed_streams_index_container2.default, onEnter: requestFollowedStreams })
 	      )
 	    )
 	  );
@@ -31402,7 +31401,7 @@
 	    var _this = _possibleConstructorReturn(this, (Sidebar.__proto__ || Object.getPrototypeOf(Sidebar)).call(this, props));
 	
 	    _this.state = {
-	      tab: null
+	      tab: 1
 	    };
 	    return _this;
 	  }
@@ -31547,17 +31546,24 @@
 	        return _react2.default.createElement(
 	          'h2',
 	          { className: 'logged-in' },
-	          _react2.default.createElement('img', { src: this.props.session.logo ? this.props.session.logo : 'https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png' }),
+	          _react2.default.createElement('img', { className: 'logo', src: '../../assets/icons/logo.png' }),
+	          _react2.default.createElement('img', { className: 'profile-pic', src: this.props.session.logo ? this.props.session.logo : 'https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png' }),
 	          _react2.default.createElement(
 	            'span',
 	            { className: 'displayName' },
 	            this.props.session.display_name
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            { className: 'logout', onClick: this.props.receiveLogout },
+	            'Logout'
 	          )
 	        );
 	      } else {
 	        return _react2.default.createElement(
 	          'h2',
 	          { className: 'login-header' },
+	          _react2.default.createElement('img', { className: 'logo', src: '../../assets/icons/logo.png' }),
 	          _react2.default.createElement('img', { src: 'http://ttv-api.s3.amazonaws.com/assets/connect_dark.png', className: 'clickable', onClick: _twitch_api_util.login })
 	        );
 	      }
