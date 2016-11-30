@@ -66,6 +66,8 @@
 	
 	var _auth = __webpack_require__(293);
 	
+	var _reactRouter = __webpack_require__(304);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	document.addEventListener('DOMContentLoaded', function () {
@@ -81,6 +83,7 @@
 	    window.store = store;
 	    store.dispatch((0, _twitch_actions.requestUser)(window.authToken));
 	    _reactDom2.default.render(_react2.default.createElement(_root2.default, { store: store }), root);
+	    _reactRouter.hashHistory.push('/games');
 	  };
 	  (0, _auth.bindToken)(setUp);
 	});
@@ -22863,11 +22866,16 @@
 	
 	var _session_reducer2 = _interopRequireDefault(_session_reducer);
 	
+	var _loading_reducer = __webpack_require__(374);
+	
+	var _loading_reducer2 = _interopRequireDefault(_loading_reducer);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = (0, _redux.combineReducers)({
 	  twitch: _twitch_reducer2.default,
-	  session: _session_reducer2.default
+	  session: _session_reducer2.default,
+	  loading: _loading_reducer2.default
 	});
 
 /***/ },
@@ -25645,6 +25653,8 @@
 	      if (cb) {
 	        cb(window.authToken);
 	      }
+	    } else {
+	      cb();
 	    }
 	  });
 	};
@@ -31511,6 +31521,8 @@
 	
 	var _twitch_api_util = __webpack_require__(202);
 	
+	var _auth = __webpack_require__(293);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31577,7 +31589,8 @@
 	
 	var mapStateToProps = function mapStateToProps(state) {
 	  return {
-	    twitch: state.twitch
+	    twitch: state.twitch,
+	    loading: state.loading
 	  };
 	};
 	
@@ -31621,6 +31634,40 @@
 	  }
 	
 	  _createClass(TopStreamsIndex, [{
+	    key: 'loader',
+	    value: function loader() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'sequence' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'seq-preloader' },
+	          _react2.default.createElement(
+	            'svg',
+	            { width: '39', height: '16', viewBox: '0 0 39 16', xmlns: 'http://www.w3.org/2000/svg',
+	              className: 'seq-preload-indicator' },
+	            _react2.default.createElement(
+	              'title',
+	              null,
+	              'Sequence Preloader Icon'
+	            ),
+	            _react2.default.createElement(
+	              'desc',
+	              null,
+	              'Three orange dots increasing in size from left to right'
+	            ),
+	            _react2.default.createElement(
+	              'g',
+	              { fill: '#F96D38' },
+	              _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-1', d: 'M3.999 12.012c2.209 0 3.999-1.791 3.999-3.999s-1.79-3.999-3.999-3.999-3.999 1.791-3.999 3.999 1.79 3.999 3.999 3.999z' }),
+	              _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-2', d: 'M15.996 13.468c3.018 0 5.465-2.447 5.465-5.466 0-3.018-2.447-5.465-5.465-5.465-3.019 0-5.466 2.447-5.466 5.465 0 3.019 2.447 5.466 5.466 5.466z' }),
+	              _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-3', d: 'M31.322 15.334c4.049 0 7.332-3.282 7.332-7.332 0-4.049-3.282-7.332-7.332-7.332s-7.332 3.283-7.332 7.332c0 4.05 3.283 7.332 7.332 7.332z' })
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      if (this.props.twitch.streams) {
@@ -31632,7 +31679,15 @@
 	          })
 	        );
 	      } else {
-	        return _react2.default.createElement('div', null);
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'no-followed-streams' },
+	          _react2.default.createElement(
+	            'span',
+	            null,
+	            'Could not load top streams from Twitch, please check your internet connection'
+	          )
+	        );
 	      }
 	    }
 	  }]);
@@ -31800,7 +31855,16 @@
 	          })
 	        );
 	      } else {
-	        return _react2.default.createElement('div', null);
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'no-followed-streams' },
+	          ' ',
+	          _react2.default.createElement(
+	            'span',
+	            null,
+	            'Could not load games data from Twitch, please check your internet connection'
+	          )
+	        );
 	      }
 	    }
 	  }]);
@@ -32225,6 +32289,39 @@
 	}(_react2.default.Component);
 	
 	exports.default = FollowedStreamsIndexItem;
+
+/***/ },
+/* 374 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _merge = __webpack_require__(207);
+	
+	var _merge2 = _interopRequireDefault(_merge);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var LoadingReducer = function LoadingReducer() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+	  var action = arguments[1];
+	
+	  Object.freeze(state);
+	
+	  if (action.type.includes("REQUEST")) {
+	    return true;
+	  } else if (action.type.includes("RECEIVE")) {
+	    return false;
+	  } else {
+	    return state;
+	  }
+	};
+	
+	exports.default = LoadingReducer;
 
 /***/ }
 /******/ ]);

@@ -5,6 +5,8 @@ export const bindToken = (cb) => {
       if(cb){
         cb(window.authToken);
       }
+    }else{
+      cb();
     }
   });
 };

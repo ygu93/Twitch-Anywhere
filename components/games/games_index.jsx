@@ -15,7 +15,7 @@ class GamesIndex extends React.Component{
         </div>
       );
     }else{
-      return <div></div>;
+      return <div className='no-followed-streams'> <span>Could not load games data from Twitch, please check your internet connection</span></div>;
     }
   }
 }

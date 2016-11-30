@@ -1,5 +1,6 @@
 import React from 'react';
-import {login} from '../../util/twitch_api_util';
+import {login, receiveLogout} from '../../util/twitch_api_util';
+import {removeToken} from '../../auth';
 
 class Session extends React.Component{
   constructor(props){

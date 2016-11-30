@@ -4,6 +4,7 @@ import configureStore from './store/store.js';
 import {requestUser} from './actions/twitch_actions';
 import Root from './components/root';
 import {bindToken} from './auth.js';
+import { Router, Route, IndexRoute, hashHistory } from 'react-router';
 
 document.addEventListener('DOMContentLoaded', () => {
   let setUp = () => {
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.store = store;
     store.dispatch(requestUser(window.authToken));
     ReactDOM.render(<Root store={store}/>, root);
+    hashHistory.push('/games');
   };
   bindToken(setUp);
 });
