@@ -1,53 +1,55 @@
 # Twitch Anywhere
 
-## Background
-Twitch Anywhere is a google chrome extension for twitch.tv. It allows users to access their twitch account from any webpage. Also allows users to view certain parts of Twitch's page as well.
+[Live link][git]
+[git]: https://chrome.google.com/webstore/detail/twitch-anywhere/ncnpbpmedijfhnahjkgnmmaphdalhfle?hl=en-US
 
-## Functionality & MVP
-With this chrome extension, users will be able to:
-- Access their followed streamers so if any of them are live
-- Access the Twitch games page to see which games have the most viewers currently
-- Access Twitch's top streams page to see who the top streamers(most current viewers)
-- Click on a stream and have it open the stream in a new window/current tab(TBD which one or both)
-
-## Wireframes
-The extension will be something a user can click on their browser and open a screen. The menu will show a bunch of tabs and the information for each tab.
-
-![wireframes] (https://github.com/ygu93/Twitch-Anywhere/blob/master/Wireframe/twitch-wireframe.png)
-
-## Architecture and technologies
- - This extension will use Twitch's API for all its backend calls.
- - React and most likely Redux for its frontend rendering
-
- How I envision it to be will be much like a tabs widget. Each click on a tab will send a request to Twitch's API to grab the necessary info for that page via an AJAX request. The information will get parsed and sent to a details component for that particular tab. eg: FollowedStreamDetails and DetailsItem. There will be a default tab set so some detail will always be rendered.
+Twitch Anywhere is a Google Chrome extension built using JavaScript, React, HTML, and CSS. This extension allows you to look at who is streaming on Twitch.tv from any website.
 
 
-## Implementation Timeline
-Day 1: Learn Twitch API
+## Features and Implementation
 
-Read up on Twitch's API to get all the necessary calls I need, make sure my AJAX requests can be sent and data is given back. This includes AJAX requests for signing in and being able to pass user credentials and auth tokens to Twitch.
 
-Day 2: Build Layout for overall extension
+### Twitch API
+This extension makes calls to Twitch's API to generate all of its data. It accomplishes this through AJAX requests and then parses the data for display. Currently you can see the top games on Twitch and see the top streams for each game. You can also view your followed streams to see if any of the streamers are live, and you can see the top overall streams on Twitch by viewer count.
 
-At this point I'd like to be able to click an icon and have some rectangular box show up on my browser with some icons for tabs, no functionality to the tabs yet.
+```JavaScript
+$.ajax({
+  method:'GET',
+  url: 'https://api.twitch.tv/kraken/games/top?limit=100',
+  headers: {
+    'Client-ID': 'My Client ID'
+  },
+  success
+});
+```
 
-Day 3: Auth
+<img src='./readme-images/top-games.png'/>
 
-Users can sign in to their twitch account via the extension menu
 
-Day 4: Games
 
-Users can make a GET request to twitchs api /games/top and see the top games on twitch, Users can click into the game to see the top streams for that game. Also can click on a stream to go to the twitch stream.
+### User Authentication
+User authentication is achieved using Twitch's API in conjunction with Google Chrome's API. When the user clicks on the connect to twitch button, they are redirected to Twitch's OAuth2 link to authorize this extension to access the user's data in a new Chrome tab. If the user allows authorization, Twitch's API will redirect them to a preset OAuth2 redirect URL which I have set to chromiumapp.org/extensionIdHere with the user's access token in the query string of the redirect URL.
 
-Day 5: Top streams
+```JavaScript
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  let url = tab.url;
+  if(url.includes('https://<extensionid>.chromiumapp.org/#access_token=')){
+    chrome.storage.sync.set({'TwitchAnywhereToken': url.match(/access_token=([^&]*)/)[1]});
+    chrome.tabs.remove(tabId);
+  }
+});
+```
+In order to grab this url, I use a chrome.tabs event listener in a Chrome extension background page to look for the specific redirect URL link, grab the access token using regex, and save the access token using chrome.storage.sync to save it to browser. I chose to use sync over storage.local so users can be authorized across different computers as long as they are signed into their google account. This token is loaded if it exists in the Chrome storage upon start of the extension so the user does not have to authorize again for future sessions. I then close this tab that leads to nowhere so that the user does not have a useless tab open in their browser. While there is no Twitch API call to revoke access to the app, I added a logout feature in the case of multiple users per computer.
 
-Similar to games but a top streams detail.
 
-Day 6: Followed Streamers
 
-Logged in users can see which streamers are live out of the ones they are currently following. As with the others, also has click functionality to open a window.
+## Future Features
 
-### Bonus features
- - Settings menu to configure default tab, how to open a new stream(new tab/new window/popout)
- - More tabs, Twitch's api is capable of a lot of things I could also add in the future, a followed games tab, subscriptions tab,etc
- - Search, allows users to filter the results of any tab. If on the games page and I'm looking for "Hearthstone", I can type in hearthstone into the searchbar the games will filter to only the hearthstone one.
+### More tabs
+Make further use of Twitch's api to add more features for the user. A good example is using Twitch's search API call to allow for users to search for streams, channels, etc.
+
+### Notifications
+Add notifications for the followed streams so that when a followed streamer starts streaming, the icon will update in the browser as well as a notification message for the user.  
+
+### More user customization
+Allow the user more control over the app. Maybe they don't want it to open the stream in a new tab but in a pop window instead. Also right now the default tab is set to Top Games but in the future I'd like the user to select which tab they want as default.

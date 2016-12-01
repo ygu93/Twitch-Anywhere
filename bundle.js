@@ -22603,17 +22603,13 @@
 
 /***/ },
 /* 202 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.login = exports.fetchUserData = exports.getUser = exports.getFollows = exports.getStreams = exports.fetchStreamsOfGame = exports.getGames = undefined;
-	
-	var _auth = __webpack_require__(293);
-	
 	var getGames = exports.getGames = function getGames(success) {
 	  $.ajax({
 	    method: 'GET',
@@ -22685,7 +22681,6 @@
 	
 	var login = exports.login = function login() {
 	  window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/');
-	  (0, _auth.test)();
 	};
 
 /***/ },
@@ -25670,16 +25665,6 @@
 	var setToken = exports.setToken = function setToken(redirectUrl) {
 	  chrome.storage.sync.set({ 'authToken': redirectUrl.match(/access_token=([^&]*)/)[1] });
 	};
-	
-	// export const auth = (cb) => {
-	//   chrome.identity.launchWebAuthFlow(
-	//   {'url':'https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/', 'interactive':true},
-	//   function(redirectUrl){
-	//     chrome.storage.sync.set({'authToken': redirectUrl.match(/access_token=([^&]*)/)[1]});
-	//     bindToken(cb);
-	//   }
-	// );
-	// };
 
 /***/ },
 /* 294 */
@@ -31536,27 +31521,60 @@
 	  function Session(props) {
 	    _classCallCheck(this, Session);
 	
-	    return _possibleConstructorReturn(this, (Session.__proto__ || Object.getPrototypeOf(Session)).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (Session.__proto__ || Object.getPrototypeOf(Session)).call(this, props));
+	
+	    _this.state = {
+	      menu: false
+	    };
+	    _this.showMenu = _this.showMenu.bind(_this);
+	    return _this;
 	  }
 	
 	  _createClass(Session, [{
+	    key: 'menu',
+	    value: function menu() {
+	      return _react2.default.createElement(
+	        'ul',
+	        { className: 'hamb-menu' },
+	        _react2.default.createElement(
+	          'li',
+	          { className: 'clickable', onClick: this.props.receiveLogout },
+	          _react2.default.createElement(
+	            'span',
+	            null,
+	            'Logout'
+	          )
+	        )
+	      );
+	    }
+	  }, {
+	    key: 'showMenu',
+	    value: function showMenu() {
+	      this.setState({ menu: !this.state.menu });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      if (this.props.session.authToken && this.props.session.display_name && this.props.session.display_name !== 'Undefined') {
 	        return _react2.default.createElement(
 	          'h2',
 	          { className: 'logged-in' },
-	          _react2.default.createElement('img', { className: 'logo', src: '../../assets/icons/logo.png' }),
-	          _react2.default.createElement('img', { className: 'profile-pic', src: this.props.session.logo ? this.props.session.logo : 'https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png' }),
 	          _react2.default.createElement(
-	            'span',
-	            { className: 'displayName' },
-	            this.props.session.display_name
+	            'div',
+	            { className: 'logo-container' },
+	            _react2.default.createElement('img', { className: 'logo', src: '../../assets/icons/logo.png' })
 	          ),
 	          _react2.default.createElement(
-	            'button',
-	            { className: 'logout', onClick: this.props.receiveLogout },
-	            'Logout'
+	            'div',
+	            { className: 'user-info' },
+	            _react2.default.createElement('img', { className: 'profile-pic', src: this.props.session.logo ? this.props.session.logo : 'https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png' }),
+	            _react2.default.createElement(
+	              'span',
+	              { className: 'display-name' },
+	              this.props.session.display_name
+	            ),
+	            _react2.default.createElement('img', { className: 'hamb-icon clickable', onClick: this.showMenu, src: '../../assets/icons/hamburger-icon.png' }),
+	            this.state.menu ? this.menu() : _react2.default.createElement('div', null)
 	          )
 	        );
 	      } else {
@@ -31564,7 +31582,11 @@
 	          'h2',
 	          { className: 'login-header' },
 	          _react2.default.createElement('img', { className: 'logo', src: '../../assets/icons/logo.png' }),
-	          _react2.default.createElement('img', { src: 'http://ttv-api.s3.amazonaws.com/assets/connect_dark.png', className: 'clickable', onClick: _twitch_api_util.login })
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'connect-container' },
+	            _react2.default.createElement('img', { src: 'http://ttv-api.s3.amazonaws.com/assets/connect_dark.png', className: 'clickable', onClick: _twitch_api_util.login })
+	          )
 	        );
 	      }
 	    }
@@ -31640,40 +31662,6 @@
 	  }
 	
 	  _createClass(TopStreamsIndex, [{
-	    key: 'loader',
-	    value: function loader() {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'sequence' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'seq-preloader' },
-	          _react2.default.createElement(
-	            'svg',
-	            { width: '39', height: '16', viewBox: '0 0 39 16', xmlns: 'http://www.w3.org/2000/svg',
-	              className: 'seq-preload-indicator' },
-	            _react2.default.createElement(
-	              'title',
-	              null,
-	              'Sequence Preloader Icon'
-	            ),
-	            _react2.default.createElement(
-	              'desc',
-	              null,
-	              'Three orange dots increasing in size from left to right'
-	            ),
-	            _react2.default.createElement(
-	              'g',
-	              { fill: '#F96D38' },
-	              _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-1', d: 'M3.999 12.012c2.209 0 3.999-1.791 3.999-3.999s-1.79-3.999-3.999-3.999-3.999 1.791-3.999 3.999 1.79 3.999 3.999 3.999z' }),
-	              _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-2', d: 'M15.996 13.468c3.018 0 5.465-2.447 5.465-5.466 0-3.018-2.447-5.465-5.465-5.465-3.019 0-5.466 2.447-5.466 5.465 0 3.019 2.447 5.466 5.466 5.466z' }),
-	              _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-3', d: 'M31.322 15.334c4.049 0 7.332-3.282 7.332-7.332 0-4.049-3.282-7.332-7.332-7.332s-7.332 3.283-7.332 7.332c0 4.05 3.283 7.332 7.332 7.332z' })
-	            )
-	          )
-	        )
-	      );
-	    }
-	  }, {
 	    key: 'render',
 	    value: function render() {
 	      if (this.props.twitch.streams) {
@@ -31683,6 +31671,37 @@
 	          this.props.twitch.streams.map(function (stream, idx) {
 	            return _react2.default.createElement(_top_streams_index_item2.default, { key: idx, stream: stream });
 	          })
+	        );
+	      } else if (this.props.loading) {
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'sequence' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'seq-preloader' },
+	            _react2.default.createElement(
+	              'svg',
+	              { width: '39', height: '16', viewBox: '0 0 39 16', xmlns: 'http://www.w3.org/2000/svg',
+	                className: 'seq-preload-indicator' },
+	              _react2.default.createElement(
+	                'title',
+	                null,
+	                'Sequence Preloader Icon'
+	              ),
+	              _react2.default.createElement(
+	                'desc',
+	                null,
+	                'Three orange dots increasing in size from left to right'
+	              ),
+	              _react2.default.createElement(
+	                'g',
+	                { fill: '#F96D38' },
+	                _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-1', d: 'M3.999 12.012c2.209 0 3.999-1.791 3.999-3.999s-1.79-3.999-3.999-3.999-3.999 1.791-3.999 3.999 1.79 3.999 3.999 3.999z' }),
+	                _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-2', d: 'M15.996 13.468c3.018 0 5.465-2.447 5.465-5.466 0-3.018-2.447-5.465-5.465-5.465-3.019 0-5.466 2.447-5.466 5.465 0 3.019 2.447 5.466 5.466 5.466z' }),
+	                _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-3', d: 'M31.322 15.334c4.049 0 7.332-3.282 7.332-7.332 0-4.049-3.282-7.332-7.332-7.332s-7.332 3.283-7.332 7.332c0 4.05 3.283 7.332 7.332 7.332z' })
+	              )
+	            )
+	          )
 	        );
 	      } else {
 	        return _react2.default.createElement(
@@ -31806,7 +31825,8 @@
 	
 	var mapStateToProps = function mapStateToProps(state) {
 	  return {
-	    twitch: state.twitch
+	    twitch: state.twitch,
+	    loading: state.loading
 	  };
 	};
 	
@@ -31859,6 +31879,37 @@
 	          this.props.twitch.top.map(function (game, idx) {
 	            return _react2.default.createElement(_games_index_item2.default, { key: idx, game: game });
 	          })
+	        );
+	      } else if (this.props.loading) {
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'sequence' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'seq-preloader' },
+	            _react2.default.createElement(
+	              'svg',
+	              { width: '39', height: '16', viewBox: '0 0 39 16', xmlns: 'http://www.w3.org/2000/svg',
+	                className: 'seq-preload-indicator' },
+	              _react2.default.createElement(
+	                'title',
+	                null,
+	                'Sequence Preloader Icon'
+	              ),
+	              _react2.default.createElement(
+	                'desc',
+	                null,
+	                'Three orange dots increasing in size from left to right'
+	              ),
+	              _react2.default.createElement(
+	                'g',
+	                { fill: '#F96D38' },
+	                _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-1', d: 'M3.999 12.012c2.209 0 3.999-1.791 3.999-3.999s-1.79-3.999-3.999-3.999-3.999 1.791-3.999 3.999 1.79 3.999 3.999 3.999z' }),
+	                _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-2', d: 'M15.996 13.468c3.018 0 5.465-2.447 5.465-5.466 0-3.018-2.447-5.465-5.465-5.465-3.019 0-5.466 2.447-5.466 5.465 0 3.019 2.447 5.466 5.466 5.466z' }),
+	                _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-3', d: 'M31.322 15.334c4.049 0 7.332-3.282 7.332-7.332 0-4.049-3.282-7.332-7.332-7.332s-7.332 3.283-7.332 7.332c0 4.05 3.283 7.332 7.332 7.332z' })
+	              )
+	            )
+	          )
 	        );
 	      } else {
 	        return _react2.default.createElement(
@@ -32140,7 +32191,8 @@
 	
 	var mapStateToProps = function mapStateToProps(state) {
 	  return {
-	    twitch: state.twitch
+	    twitch: state.twitch,
+	    loading: state.loading
 	  };
 	};
 	
@@ -32193,6 +32245,37 @@
 	          this.props.twitch.streams.map(function (stream, idx) {
 	            return _react2.default.createElement(_followed_streams_index_item2.default, { key: idx, stream: stream });
 	          })
+	        );
+	      } else if (this.props.loading) {
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'sequence' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'seq-preloader' },
+	            _react2.default.createElement(
+	              'svg',
+	              { width: '39', height: '16', viewBox: '0 0 39 16', xmlns: 'http://www.w3.org/2000/svg',
+	                className: 'seq-preload-indicator' },
+	              _react2.default.createElement(
+	                'title',
+	                null,
+	                'Sequence Preloader Icon'
+	              ),
+	              _react2.default.createElement(
+	                'desc',
+	                null,
+	                'Three orange dots increasing in size from left to right'
+	              ),
+	              _react2.default.createElement(
+	                'g',
+	                { fill: '#F96D38' },
+	                _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-1', d: 'M3.999 12.012c2.209 0 3.999-1.791 3.999-3.999s-1.79-3.999-3.999-3.999-3.999 1.791-3.999 3.999 1.79 3.999 3.999 3.999z' }),
+	                _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-2', d: 'M15.996 13.468c3.018 0 5.465-2.447 5.465-5.466 0-3.018-2.447-5.465-5.465-5.465-3.019 0-5.466 2.447-5.466 5.465 0 3.019 2.447 5.466 5.466 5.466z' }),
+	                _react2.default.createElement('path', { className: 'seq-preload-circle seq-preload-circle-3', d: 'M31.322 15.334c4.049 0 7.332-3.282 7.332-7.332 0-4.049-3.282-7.332-7.332-7.332s-7.332 3.283-7.332 7.332c0 4.05 3.283 7.332 7.332 7.332z' })
+	              )
+	            )
+	          )
 	        );
 	      } else {
 	        return _react2.default.createElement(

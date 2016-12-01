@@ -23,7 +23,7 @@
 }
 
 .sidebar-icons img:hover{
-  background-color: rgb(75, 40, 140);
+  background-color: #6441A4;
 }
 
 .app-body{
@@ -46,27 +46,43 @@
   margin-bottom: 0px;
   background-color: black;
   text-align: right;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+}
+
+.connect-container{
+  text-align: right;
+  height: 32px;
 }
 
 .logged-in{
   background-color: black;
   color: white;
-  font-size: 16px;
+  font-size: 12px;
   text-align: right;
-  height: 36px;
+  height: 30px;
   padding: 5px;
   font-weight: normal;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
 }
 
 .logged-in span{
-  float:right;
   margin-top: 10px;
 
 }
 
+.user-info{
+  display: flex;
+  justify-content: flex-start;
+  text-align: right;
+}
+
 .profile-pic{
-  height: 36px;
-  width: 36px;
+  height: 30px;
+  width: 30px;
   padding-right: 10px;
 }
 
@@ -98,7 +114,7 @@
 }
 
 .selected{
-  background-color: rgb(75, 40, 140);
+  background-color: #6441A4;
 }
 
 .stream-index-item:hover{
@@ -150,7 +166,45 @@
   width: 200px;
   text-align: left;
   padding-right: 48px;
+  height: 32px;
 }
+
+.hamb-icon{
+  width: 20px;
+  height: 20px;
+  padding-left: 5px;
+  margin-top: 5px;
+}
+
+.hamb-menu li:hover{
+  background-color: #6441A4;
+  color: white;
+}
+
+.hamb-menu li{
+  padding-top: 5px;
+  padding-bottom: 5px;
+  color: #6441A4;
+}
+.hamb-menu{
+  position: absolute;
+  margin-top: 35px;
+  background-color: white;
+  z-index: 2;
+  margin-left: 20px;
+  width:160px;
+  color: black;
+  border: 1px solid silver;
+  text-align: center;
+}
+
+.display-name{
+  max-width: 115px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 
 
 
@@ -172,7 +226,7 @@
 }
 
 .seq-preloader {
-  background: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.9);
   visibility: visible;
   opacity: 1;
   position: absolute;
@@ -203,7 +257,7 @@
   display: inline-block;
   height: 12px;
   width: 12px;
-  fill: #F96D38;
+  fill: #6441A4;
   opacity: 0;
   animation: seq-preloader 1.25s infinite;
 }
@@ -224,7 +278,7 @@
 .seq-preload-indicator-fallback .seq-preload-circle {
   width: 8px;
   height:8px;
-  background-color: #F96D38;
+  background-color: #6441A4;
   border-radius: 100%;
   opacity: 1;
   display: inline-block;
