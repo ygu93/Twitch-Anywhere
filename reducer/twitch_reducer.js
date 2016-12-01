@@ -3,7 +3,8 @@ import {RECEIVE_ALL_STREAMS,
         RECEIVE_ALL_GAMES,
         RECEIVE_GAME,
         RECEIVE_FOLLOWS,
-        RECEIVE_USER} from '../actions/twitch_actions.js';
+        RECEIVE_USER,
+        RECEIVE_CLEAR} from '../actions/twitch_actions.js';
 import merge from 'lodash/merge';
 
 const TwitchReducer = (state={}, action) => {
@@ -18,6 +19,8 @@ const TwitchReducer = (state={}, action) => {
       return action.game;
     case RECEIVE_FOLLOWS:
       return action.follows;
+    case RECEIVE_CLEAR:
+      return {};
     default:
       return state;
   }

@@ -12,6 +12,7 @@ export const bindToken = (cb) => {
 };
 
 export const removeToken = () => {
+  window.authToken = null;
   chrome.storage.sync.set({'authToken': null});
 };
 

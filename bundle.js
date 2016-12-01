@@ -22704,6 +22704,7 @@
 	var RECEIVE_USER = exports.RECEIVE_USER = 'RECEIVE_USER';
 	var RECEIVE_LOGIN = exports.RECEIVE_LOGIN = 'RECEIVE_LOGIN';
 	var RECEIVE_LOGOUT = exports.RECEIVE_LOGOUT = 'RECEIVE_LOGOUT';
+	var RECEIVE_CLEAR = exports.RECEIVE_CLEAR = 'RECEIVE_CLEAR';
 	
 	var requestAllGames = exports.requestAllGames = function requestAllGames() {
 	  return {
@@ -22781,6 +22782,12 @@
 	var receiveLogout = exports.receiveLogout = function receiveLogout() {
 	  return {
 	    type: RECEIVE_LOGOUT
+	  };
+	};
+	
+	var receiveClear = exports.receiveClear = function receiveClear() {
+	  return {
+	    type: RECEIVE_CLEAR
 	  };
 	};
 
@@ -22914,6 +22921,8 @@
 	      return action.game;
 	    case _twitch_actions.RECEIVE_FOLLOWS:
 	      return action.follows;
+	    case _twitch_actions.RECEIVE_CLEAR:
+	      return {};
 	    default:
 	      return state;
 	  }
@@ -25659,6 +25668,7 @@
 	};
 	
 	var removeToken = exports.removeToken = function removeToken() {
+	  window.authToken = null;
 	  chrome.storage.sync.set({ 'authToken': null });
 	};
 	
@@ -25729,6 +25739,8 @@
 	  var requestFollowedStreams = function requestFollowedStreams() {
 	    if (window.authToken) {
 	      store.dispatch((0, _twitch_actions.requestFollows)());
+	    } else {
+	      store.dispatch((0, _twitch_actions.receiveClear)());
 	    }
 	  };
 	

@@ -7,7 +7,8 @@ import {requestAllStreams,
         requestAllGames,
         requestGame,
         requestFollows,
-        requestUser} from '../actions/twitch_actions';
+        requestUser,
+        receiveClear} from '../actions/twitch_actions';
 import GamesIndexContainer from './games/games_index_container';
 import GameDetailsContainer from './games/game_details_container';
 import FollowedStreamsIndexContainer from './followed/followed_streams_index_container';
@@ -25,6 +26,8 @@ const Root = ({ store }) => {
   const requestFollowedStreams = () => {
     if(window.authToken){
       store.dispatch(requestFollows());
+    }else{
+      store.dispatch(receiveClear());
     }
   };
 
