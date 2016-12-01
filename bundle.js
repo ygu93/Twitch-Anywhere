@@ -22680,7 +22680,7 @@
 	};
 	
 	var login = exports.login = function login() {
-	  window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://jigfnpghjghfgpjobdmecafdfnphgbnp.chromiumapp.org/');
+	  window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://ncnpbpmedijfhnahjkgnmmaphdalhfle.chromiumapp.org/');
 	};
 
 /***/ },
@@ -31574,7 +31574,11 @@
 	              this.props.session.display_name
 	            ),
 	            _react2.default.createElement('img', { className: 'hamb-icon clickable', onClick: this.showMenu, src: '../../assets/icons/hamburger-icon.png' }),
-	            this.state.menu ? this.menu() : _react2.default.createElement('div', null)
+	            _react2.default.createElement(
+	              'div',
+	              null,
+	              this.state.menu ? this.menu() : _react2.default.createElement('div', null)
+	            )
 	          )
 	        );
 	      } else {

@@ -34,7 +34,9 @@ class Session extends React.Component{
             <img className='profile-pic' src={this.props.session.logo ? this.props.session.logo: 'https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png'}/>
             <span className='display-name'>{this.props.session.display_name}</span>
             <img className='hamb-icon clickable' onClick={this.showMenu} src='../../assets/icons/hamburger-icon.png'></img>
-            {this.state.menu ? this.menu() : <div></div>}
+            <div>
+              {this.state.menu ? this.menu() : <div></div>}
+            </div>
 
           </div>
         </h2>

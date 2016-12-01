@@ -3,7 +3,7 @@
 
   "name": "Twitch Anywhere",
   "description": "This extension allows you to check whos streaming on Twitch.tv from anywhere",
-  "version": "1.0",
+  "version": "1.1",
 
   "browser_action": {
     "default_icon": "./assets/icons/vohiyo.png",
