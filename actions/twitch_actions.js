@@ -11,6 +11,7 @@ export const RECEIVE_USER = 'RECEIVE_USER';
 export const RECEIVE_LOGIN = 'RECEIVE_LOGIN';
 export const RECEIVE_LOGOUT  = 'RECEIVE_LOGOUT';
 export const RECEIVE_CLEAR = 'RECEIVE_CLEAR';
+export const RECEIVE_ERRORS = 'RECEIVE_ERRORS';
 
 export const requestAllGames = () => ({
   type: REQUEST_ALL_GAMES
@@ -69,4 +70,8 @@ export const receiveLogout = () => ({
 
 export const receiveClear = () => ({
   type: RECEIVE_CLEAR
+});
+
+export const receiveErrors = () => ({
+  type: RECEIVE_ERRORS
 });

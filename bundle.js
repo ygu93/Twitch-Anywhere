@@ -22610,14 +22610,15 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var getGames = exports.getGames = function getGames(success) {
+	var getGames = exports.getGames = function getGames(success, error) {
 	  $.ajax({
 	    method: 'GET',
 	    url: 'https://api.twitch.tv/kraken/games/top?limit=100',
 	    headers: {
 	      'Client-ID': '15vijk38vjlkj9kirhl904phbinisif'
 	    },
-	    success: success
+	    success: success,
+	    error: error
 	  });
 	};
 	
@@ -22632,18 +22633,19 @@
 	  });
 	};
 	
-	var getStreams = exports.getStreams = function getStreams(success) {
+	var getStreams = exports.getStreams = function getStreams(success, error) {
 	  $.ajax({
 	    method: 'GET',
 	    url: 'https://api.twitch.tv/kraken/streams',
 	    headers: {
 	      'Client-ID': '15vijk38vjlkj9kirhl904phbinisif'
 	    },
-	    success: success
+	    success: success,
+	    error: error
 	  });
 	};
 	
-	var getFollows = exports.getFollows = function getFollows(success) {
+	var getFollows = exports.getFollows = function getFollows(success, error) {
 	  $.ajax({
 	    method: 'GET',
 	    url: 'https://api.twitch.tv/kraken/streams/followed',
@@ -22651,7 +22653,8 @@
 	      'Client-ID': '15vijk38vjlkj9kirhl904phbinisif',
 	      'Authorization': 'OAuth ' + window.authToken
 	    },
-	    success: success
+	    success: success,
+	    error: error
 	
 	  });
 	};
@@ -22705,6 +22708,7 @@
 	var RECEIVE_LOGIN = exports.RECEIVE_LOGIN = 'RECEIVE_LOGIN';
 	var RECEIVE_LOGOUT = exports.RECEIVE_LOGOUT = 'RECEIVE_LOGOUT';
 	var RECEIVE_CLEAR = exports.RECEIVE_CLEAR = 'RECEIVE_CLEAR';
+	var RECEIVE_ERRORS = exports.RECEIVE_ERRORS = 'RECEIVE_ERRORS';
 	
 	var requestAllGames = exports.requestAllGames = function requestAllGames() {
 	  return {
@@ -22790,6 +22794,12 @@
 	    type: RECEIVE_CLEAR
 	  };
 	};
+	
+	var receiveErrors = exports.receiveErrors = function receiveErrors() {
+	  return {
+	    type: RECEIVE_ERRORS
+	  };
+	};
 
 /***/ },
 /* 204 */
@@ -22827,18 +22837,22 @@
 	        });
 	      };
 	
+	      var receiveErrorsSuccess = function receiveErrorsSuccess() {
+	        return dispatch((0, _twitch_actions.receiveErrors)());
+	      };
+	
 	      switch (action.type) {
 	        case _twitch_actions.REQUEST_ALL_STREAMS:
-	          (0, _twitch_api_util.getStreams)(receiveAllStreamsSuccess);
+	          (0, _twitch_api_util.getStreams)(receiveAllStreamsSuccess, receiveErrorsSuccess);
 	          return next(action);
 	        case _twitch_actions.REQUEST_ALL_GAMES:
-	          (0, _twitch_api_util.getGames)(receiveAllGamesSuccess);
+	          (0, _twitch_api_util.getGames)(receiveAllGamesSuccess, receiveErrorsSuccess);
 	          return next(action);
 	        case _twitch_actions.REQUEST_GAME:
 	          (0, _twitch_api_util.fetchStreamsOfGame)(action.game, receiveGameSuccess);
 	          return next(action);
 	        case _twitch_actions.REQUEST_FOLLOWS:
-	          (0, _twitch_api_util.getFollows)(receiveFollowsSuccess);
+	          (0, _twitch_api_util.getFollows)(receiveFollowsSuccess, receiveErrorsSuccess);
 	          return next(action);
 	        case _twitch_actions.REQUEST_USER:
 	          (0, _twitch_api_util.getUser)(action.token, receiveUserSuccess);
@@ -22923,6 +22937,9 @@
 	      return action.follows;
 	    case _twitch_actions.RECEIVE_CLEAR:
 	      return {};
+	    case _twitch_actions.RECEIVE_ERRORS:
+	      dup['errors'] = ["Twitch API Timeout"];
+	      return dup;
 	    default:
 	      return state;
 	  }

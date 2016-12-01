@@ -1,13 +1,14 @@
 
 
-export const getGames = (success) => {
+export const getGames = (success, error) => {
   $.ajax({
     method:'GET',
     url: 'https://api.twitch.tv/kraken/games/top?limit=100',
     headers: {
       'Client-ID': '15vijk38vjlkj9kirhl904phbinisif'
     },
-    success
+    success,
+    error
   });
 };
 
@@ -22,19 +23,20 @@ export const fetchStreamsOfGame = (game, success) => {
   });
 };
 
-export const getStreams = (success) => {
+export const getStreams = (success, error) => {
   $.ajax({
     method:'GET',
     url: 'https://api.twitch.tv/kraken/streams',
     headers: {
       'Client-ID': '15vijk38vjlkj9kirhl904phbinisif'
     },
-    success
+    success,
+    error
   });
 };
 
 
-export const getFollows = (success) => {
+export const getFollows = (success, error) => {
   $.ajax({
     method:'GET',
     url: 'https://api.twitch.tv/kraken/streams/followed',
@@ -42,7 +44,8 @@ export const getFollows = (success) => {
       'Client-ID': '15vijk38vjlkj9kirhl904phbinisif',
       'Authorization': `OAuth ${window.authToken}`
     },
-    success
+    success,
+    error
 
   });
 };

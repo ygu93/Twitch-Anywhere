@@ -13,7 +13,8 @@ import {REQUEST_ALL_STREAMS,
         REQUEST_FOLLOWS,
         receiveFollows,
         REQUEST_USER,
-        receiveUser} from '../actions/twitch_actions.js';
+        receiveUser,
+        receiveErrors} from '../actions/twitch_actions.js';
 
 const TwitchMiddleware = ({dispatch}) => next => action => {
   const receiveAllGamesSuccess = data => dispatch(receiveAllGames(data));
@@ -24,18 +25,20 @@ const TwitchMiddleware = ({dispatch}) => next => action => {
     fetchUserData(data.token.user_name, user => dispatch(receiveUser(user)));
   };
 
+  const receiveErrorsSuccess = () => dispatch(receiveErrors());
+
   switch(action.type){
     case REQUEST_ALL_STREAMS:
-      getStreams(receiveAllStreamsSuccess);
+      getStreams(receiveAllStreamsSuccess, receiveErrorsSuccess);
       return next(action);
     case REQUEST_ALL_GAMES:
-      getGames(receiveAllGamesSuccess);
+      getGames(receiveAllGamesSuccess, receiveErrorsSuccess);
       return next(action);
     case REQUEST_GAME:
       fetchStreamsOfGame(action.game, receiveGameSuccess);
       return next(action);
     case REQUEST_FOLLOWS:
-      getFollows(receiveFollowsSuccess);
+      getFollows(receiveFollowsSuccess, receiveErrorsSuccess);
       return next(action);
     case REQUEST_USER:
       getUser(action.token, receiveUserSuccess);

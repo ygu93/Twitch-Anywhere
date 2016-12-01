@@ -4,7 +4,8 @@ import {RECEIVE_ALL_STREAMS,
         RECEIVE_GAME,
         RECEIVE_FOLLOWS,
         RECEIVE_USER,
-        RECEIVE_CLEAR} from '../actions/twitch_actions.js';
+        RECEIVE_CLEAR,
+        RECEIVE_ERRORS} from '../actions/twitch_actions.js';
 import merge from 'lodash/merge';
 
 const TwitchReducer = (state={}, action) => {
@@ -21,6 +22,9 @@ const TwitchReducer = (state={}, action) => {
       return action.follows;
     case RECEIVE_CLEAR:
       return {};
+    case RECEIVE_ERRORS:
+      dup['errors'] = ["Twitch API Timeout"];
+      return dup;
     default:
       return state;
   }
