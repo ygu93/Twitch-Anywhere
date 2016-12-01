@@ -3,7 +3,7 @@
 [Live link][git]
 [git]: https://chrome.google.com/webstore/detail/twitch-anywhere/ncnpbpmedijfhnahjkgnmmaphdalhfle?hl=en-US
 
-Twitch Anywhere is a Google Chrome extension built using JavaScript, React, HTML, and CSS. This extension allows you to look at who is streaming on Twitch.tv from any website.
+Twitch Anywhere is a Google Chrome extension built using JavaScript with React and Redux. This extension allows you to look at who is streaming on Twitch.tv from any website.
 
 
 ## Features and Implementation
