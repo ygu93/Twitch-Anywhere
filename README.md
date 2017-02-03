@@ -28,6 +28,8 @@ $.ajax({
 
 
 ### User Authentication
+
+<img src='https://s3.amazonaws.com/goodanimesvideos/authdemo.gif'/>
 User authentication is achieved using Twitch's API in conjunction with Google Chrome's API. When the user clicks on the connect to twitch button, they are redirected to Twitch's OAuth2 link to authorize this extension to access the user's data in a new Chrome tab. If the user allows authorization, Twitch's API will redirect them to a preset OAuth2 redirect URL which I have set to chromiumapp.org/extensionIdHere with the user's access token in the query string of the redirect URL.
 
 ```JavaScript
