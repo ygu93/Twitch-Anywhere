@@ -5,7 +5,6 @@ import {requestUser} from './actions/twitch_actions';
 import Root from './components/root';
 import {bindToken} from './auth.js';
 import { Router, Route, IndexRoute, hashHistory } from 'react-router';
-import {login} from './util/twitch_api_util';
 
 document.addEventListener('DOMContentLoaded', () => {
   let setUp = () => {
@@ -18,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const root = document.getElementById('root');
     window.store = store;
-    window.login = login;
     store.dispatch(requestUser(window.authToken));
     ReactDOM.render(<Root store={store}/>, root);
     hashHistory.push('/games');

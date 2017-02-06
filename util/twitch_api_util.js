@@ -74,5 +74,5 @@ export const fetchUserData = (username, success) => {
 };
 
 export const login = () => {
-  window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://ncnpbpmedijfhnahjkgnmmaphdalhfle.chromiumapp.org&scope=user_read');
+  window.open('https://api.twitch.tv/kraken/oauth2/authorize?response_type=token&client_id=15vijk38vjlkj9kirhl904phbinisif&redirect_uri=https://ncnpbpmedijfhnahjkgnmmaphdalhfle.chromiumapp.org/&scope=user_read');
 };
