@@ -28,7 +28,7 @@ class FollowedStreamsIndex extends React.Component{
         </div>
             );
     }else{
-      return <div className='no-followed-streams'><span>None of your followed channels are live right now</span></div>;
+      return <div className='no-followed-streams'><span>None of your followed channels are live right now!!</span></div>;
     }
   }
 }
